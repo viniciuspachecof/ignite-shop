@@ -60,6 +60,7 @@ export const ProductDetails = styled('div', {
     cursor: 'pointer',
     fontWeight: 'bold',
     fontSize: '$md',
+    transition: 'background-color 0.1s',
 
     '&:disabled': {
       opacity: 0.6,

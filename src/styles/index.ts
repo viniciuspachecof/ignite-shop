@@ -11,6 +11,9 @@ export const { config, styled, css, globalCss, keyframes, getCssText, theme, cre
 
       green500: '#00875f',
       green300: '#00b37e',
+
+      icon: '#8D8D99',
+      elements: '#202024',
     },
 
     fontSizes: {
