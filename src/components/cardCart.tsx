@@ -1,27 +1,31 @@
-import { ContainerCardCart } from '@/styles/pages/cardCart';
+import { CartContext } from '@/contexts/CartContext';
+import { IProduct } from '@/interface/IProduct.ts';
+import { ContainerCardCart, ImageContainer } from '@/styles/components/cardCart';
 import Image from 'next/image';
-import camisa from '../assets/camisa.png';
+import { useContext } from 'react';
 
 interface CardCartProps {
-  title: string;
-  value: number;
+  product: IProduct;
 }
 
-export function CardCart({ title, value }: CardCartProps) {
+export function CardCart({ product }: CardCartProps) {
+  const { onRemoverProduct } = useContext(CartContext);
+
+  function handlerRemoveProductCart(product: IProduct) {
+    onRemoverProduct(product);
+  }
+
   return (
     <ContainerCardCart>
-      <div>
-        <Image src={camisa} alt="" />
-      </div>
-      <div>
-        <p className="titulo-pedido">{title}</p>
-        <p className="preco-pedido">
-          {new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(value)}
-        </p>
-        <button className="remover-pedido">Remover</button>
+      <ImageContainer>
+        <Image src={product.imageUrl} alt="" width={91} height={91} />
+      </ImageContainer>
+      <div className="dados-pedido">
+        <p className="titulo-pedido">{product.name}</p>
+        <p className="preco-pedido">{product.price}</p>
+        <button className="remover-pedido" onClick={() => handlerRemoveProductCart(product)}>
+          Remover
+        </button>
       </div>
     </ContainerCardCart>
   );

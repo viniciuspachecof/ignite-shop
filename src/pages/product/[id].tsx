@@ -1,3 +1,5 @@
+import { CartContext } from '@/contexts/CartContext';
+import { IProduct } from '@/interface/IProduct.ts';
 import { stripe } from '@/lib/stripe';
 import { ImageContainer, ProductContainer, ProductDetails } from '@/styles/pages/product';
 import axios from 'axios';
@@ -5,45 +7,44 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Stripe from 'stripe';
 
 interface ProductProps {
-  product: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-    description: string;
-    defaultPriceId: string;
-  };
+  product: IProduct;
 }
 
 export default function Product({ product }: ProductProps) {
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false);
   const { isFallback } = useRouter();
 
+  const { onAdicionarProduct } = useContext(CartContext);
+
   if (isFallback) {
     return <p>Loading...</p>;
   }
 
-  async function handleBuyProduct() {
-    try {
-      setIsCreatingCheckoutSession(true);
+  // async function handleBuyProduct() {
+  //   try {
+  //     setIsCreatingCheckoutSession(true);
 
-      const response = await axios.post('/api/checkout', {
-        priceId: product.defaultPriceId,
-      });
+  //     const response = await axios.post('/api/checkout', {
+  //       priceId: product.defaultPriceId,
+  //     });
 
-      const { checkoutUrl } = response.data;
+  //     const { checkoutUrl } = response.data;
 
-      window.location.href = checkoutUrl;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setIsCreatingCheckoutSession(false);
+  //     window.location.href = checkoutUrl;
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   } catch (err) {
+  //     setIsCreatingCheckoutSession(false);
 
-      alert('Falha ao redirecionar ao checkout');
-    }
+  //     alert('Falha ao redirecionar ao checkout');
+  //   }
+  // }
+
+  function handlerAddProductCart(product: IProduct) {
+    onAdicionarProduct(product);
   }
 
   return (
@@ -62,7 +63,7 @@ export default function Product({ product }: ProductProps) {
 
           <p>{product.description}</p>
 
-          <button disabled={isCreatingCheckoutSession} onClick={handleBuyProduct}>
+          <button disabled={isCreatingCheckoutSession} onClick={() => handlerAddProductCart(product)}>
             Colocar na sacola
           </button>
         </ProductDetails>
@@ -104,6 +105,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ para
           style: 'currency',
           currency: 'BRL',
         }).format((price.unit_amount as number) / 100),
+        priceToTotal: (price.unit_amount as number) / 100,
         description: product.description,
         defaultPriceId: price.id,
       },

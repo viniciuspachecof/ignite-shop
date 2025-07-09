@@ -1,6 +1,6 @@
 import { styled } from '..';
 
-export const ContainerCarrinho = styled('div', {
+export const ContainerCart = styled('div', {
   width: '480px',
   height: '100vh',
   backgroundColor: '$elements',

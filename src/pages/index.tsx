@@ -11,14 +11,12 @@ import Stripe from 'stripe';
 import Link from 'next/link';
 import Head from 'next/head';
 import { HandbagIcon } from '@phosphor-icons/react';
+import { IProduct } from '@/interface/IProduct.ts';
+import { FormEvent, useContext } from 'react';
+import { CartContext } from '@/contexts/CartContext';
 
 interface HomeProps {
-  products: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-  }[];
+  products: IProduct[];
 }
 
 export default function Home({ products }: HomeProps) {
@@ -28,6 +26,12 @@ export default function Home({ products }: HomeProps) {
       spacing: 48,
     },
   });
+
+  const { onAdicionarProduct } = useContext(CartContext);
+
+  function handlerAddProductCart(product: IProduct) {
+    onAdicionarProduct(product);
+  }
 
   return (
     <>
@@ -46,7 +50,13 @@ export default function Home({ products }: HomeProps) {
                     <strong>{product.name}</strong>
                     <span>{product.price}</span>
                   </div>
-                  <button>
+                  <button
+                    onClick={(event: FormEvent) => {
+                      event.preventDefault();
+
+                      handlerAddProductCart(product);
+                    }}
+                  >
                     <HandbagIcon size={32} weight="bold" />
                   </button>
                 </footer>
@@ -75,6 +85,7 @@ export const getStaticProps: GetStaticProps = async () => {
         style: 'currency',
         currency: 'BRL',
       }).format((price.unit_amount as number) / 100),
+      priceToTotal: (price.unit_amount as number) / 100,
     };
   });
 

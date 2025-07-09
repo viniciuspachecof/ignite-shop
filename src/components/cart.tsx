@@ -1,6 +1,8 @@
-import { ContainerCarrinho } from '@/styles/pages/cart';
+import { ContainerCart } from '@/styles/components/cart';
 import { XIcon } from '@phosphor-icons/react';
-import { CardCart } from './cardCart';
+import { CardCart } from './CardCart';
+import { useContext } from 'react';
+import { CartContext } from '@/contexts/CartContext';
 
 interface CartProps {
   displayCart: boolean;
@@ -8,8 +10,12 @@ interface CartProps {
 }
 
 export function Cart({ displayCart, onDisplayCart }: CartProps) {
+  const { products } = useContext(CartContext);
+
+  console.log(products);
+
   return (
-    <ContainerCarrinho open={displayCart}>
+    <ContainerCart open={displayCart}>
       <div className="close">
         <button onClick={() => onDisplayCart(false)}>
           <XIcon size={24} weight="bold" />
@@ -19,15 +25,17 @@ export function Cart({ displayCart, onDisplayCart }: CartProps) {
       <div className="info-geral">
         <p>Sacola de Compras</p>
         <div className="lista-pedido">
-          <CardCart title="Camiseta Beyond the Limits" value={79.9} />
-          <CardCart title="Camiseta Explorer" value={62.9} />
-          <CardCart title="Camiseta Ignite Lab | ReactJS" value={89.9} />
+          {products.map((product) => (
+            <CardCart key={product.id} product={product} />
+          ))}
         </div>
 
         <div className="total-pedido">
           <div>
             <p style={{ fontSize: '1rem' }}>Quantidade</p>
-            <p style={{ color: '#C4C4CC' }}>3 itens</p>
+            <p style={{ color: '#C4C4CC' }}>
+              {products.length === 1 ? `${products.length} item` : `${products.length} itens`}
+            </p>
           </div>
           <div>
             <p>Valor total</p>
@@ -35,13 +43,13 @@ export function Cart({ displayCart, onDisplayCart }: CartProps) {
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
-              }).format(270)}
+              }).format(products.reduce((soma, product) => soma + product.priceToTotal, 0))}
             </p>
           </div>
 
           <button>Finalizar Compra</button>
         </div>
       </div>
-    </ContainerCarrinho>
+    </ContainerCart>
   );
 }
