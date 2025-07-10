@@ -86,6 +86,7 @@ export const getStaticProps: GetStaticProps = async () => {
         currency: 'BRL',
       }).format((price.unit_amount as number) / 100),
       priceToTotal: (price.unit_amount as number) / 100,
+      defaultPriceId: price.id,
     };
   });
 

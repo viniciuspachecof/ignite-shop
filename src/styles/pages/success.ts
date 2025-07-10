@@ -34,22 +34,38 @@ export const SuccessContainer = styled('main', {
       color: '$grenn300',
     },
   },
+
+  '> img': {
+    marginBottom: '20px',
+  },
 });
 
 export const ImageContainer = styled('div', {
-  width: '100%',
-  maxWidth: 130,
-  height: 145,
-  background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
-  borderRadius: 8,
-  padding: '0.25rem',
-  marginTop: '4rem',
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'nowrap',
+  padding: '40px',
+});
 
+export const ImageProduct = styled('div', {
+  width: '140px',
+  height: '140px',
+  borderRadius: '50%',
+  background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  overflow: 'hidden',
+  transition: 'transform 0.3s ease',
+  boxShadow: '0px 0px 5px 1px rgba(0,0,0,0.50)',
+
+  '&:not(:first-child)': {
+    marginLeft: '-60px',
+  },
 
   img: {
-    objectFit: 'cover',
+    maxWidth: '90%',
+    maxHeight: '90%',
+    objectFit: 'contain',
   },
 });

@@ -2,12 +2,11 @@ import { CartContext } from '@/contexts/CartContext';
 import { IProduct } from '@/interface/IProduct.ts';
 import { stripe } from '@/lib/stripe';
 import { ImageContainer, ProductContainer, ProductDetails } from '@/styles/pages/product';
-import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import Stripe from 'stripe';
 
 interface ProductProps {
@@ -15,7 +14,6 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false);
   const { isFallback } = useRouter();
 
   const { onAdicionarProduct } = useContext(CartContext);
@@ -23,25 +21,6 @@ export default function Product({ product }: ProductProps) {
   if (isFallback) {
     return <p>Loading...</p>;
   }
-
-  // async function handleBuyProduct() {
-  //   try {
-  //     setIsCreatingCheckoutSession(true);
-
-  //     const response = await axios.post('/api/checkout', {
-  //       priceId: product.defaultPriceId,
-  //     });
-
-  //     const { checkoutUrl } = response.data;
-
-  //     window.location.href = checkoutUrl;
-  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   } catch (err) {
-  //     setIsCreatingCheckoutSession(false);
-
-  //     alert('Falha ao redirecionar ao checkout');
-  //   }
-  // }
 
   function handlerAddProductCart(product: IProduct) {
     onAdicionarProduct(product);
@@ -63,9 +42,7 @@ export default function Product({ product }: ProductProps) {
 
           <p>{product.description}</p>
 
-          <button disabled={isCreatingCheckoutSession} onClick={() => handlerAddProductCart(product)}>
-            Colocar na sacola
-          </button>
+          <button onClick={() => handlerAddProductCart(product)}>Colocar na sacola</button>
         </ProductDetails>
       </ProductContainer>
     </>

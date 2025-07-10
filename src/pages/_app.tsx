@@ -16,10 +16,13 @@ export default function App({ Component, pageProps }: AppProps) {
     setDisplayCart(value);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const showHeader = (Component as any).showHeader !== false;
+
   return (
     <CartContextProvider>
       <Container>
-        <Header onDisplayCart={handleDisplayCart} />
+        {showHeader && <Header onDisplayCart={handleDisplayCart} />}
 
         <Component {...pageProps} />
 

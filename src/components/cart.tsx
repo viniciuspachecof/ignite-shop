@@ -1,8 +1,9 @@
 import { ContainerCart } from '@/styles/components/cart';
 import { XIcon } from '@phosphor-icons/react';
 import { CardCart } from './CardCart';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CartContext } from '@/contexts/CartContext';
+import axios from 'axios';
 
 interface CartProps {
   displayCart: boolean;
@@ -10,9 +11,32 @@ interface CartProps {
 }
 
 export function Cart({ displayCart, onDisplayCart }: CartProps) {
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false);
   const { products } = useContext(CartContext);
 
-  console.log(products);
+  async function handleFinishProducts() {
+    try {
+      setIsCreatingCheckoutSession(true);
+
+      const response = await axios.post('/api/checkout', {
+        productsFinish: products.map((product) => {
+          return {
+            price: product.defaultPriceId,
+            quantity: 1,
+          };
+        }),
+      });
+
+      const { checkoutUrl } = response.data;
+
+      window.location.href = checkoutUrl;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setIsCreatingCheckoutSession(false);
+
+      alert('Falha ao redirecionar ao checkout');
+    }
+  }
 
   return (
     <ContainerCart open={displayCart}>
@@ -47,7 +71,9 @@ export function Cart({ displayCart, onDisplayCart }: CartProps) {
             </p>
           </div>
 
-          <button>Finalizar Compra</button>
+          <button disabled={isCreatingCheckoutSession} onClick={handleFinishProducts}>
+            Finalizar Compra
+          </button>
         </div>
       </div>
     </ContainerCart>

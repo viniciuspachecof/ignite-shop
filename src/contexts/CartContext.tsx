@@ -1,10 +1,11 @@
 import { IProduct } from '@/interface/IProduct.ts';
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 
 interface CartContextType {
   products: IProduct[];
   onAdicionarProduct: (data: IProduct) => void;
   onRemoverProduct: (data: IProduct) => void;
+  onClearLocalStorage: () => void;
 }
 
 export const CartContext = createContext({} as CartContextType);
@@ -30,7 +31,27 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     setProducts(listaProducts);
   }
 
+  function onClearLocalStorage() {
+    localStorage.setItem('@ignite-shop:products-1.0.0', '[]');
+  }
+
+  useEffect(() => {
+    const storedStateAsJSON = localStorage.getItem('@ignite-shop:products-1.0.0');
+
+    if (storedStateAsJSON) {
+      setProducts(JSON.parse(storedStateAsJSON));
+    }
+  }, []);
+
+  useEffect(() => {
+    const stateJSON = JSON.stringify(products);
+
+    localStorage.setItem('@ignite-shop:products-1.0.0', stateJSON);
+  }, [products]);
+
   return (
-    <CartContext.Provider value={{ products, onAdicionarProduct, onRemoverProduct }}>{children}</CartContext.Provider>
+    <CartContext.Provider value={{ products, onAdicionarProduct, onRemoverProduct, onClearLocalStorage }}>
+      {children}
+    </CartContext.Provider>
   );
 }
